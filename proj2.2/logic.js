@@ -22,6 +22,7 @@ function initPOS(){
   var customCons = [];
   var ticketCount = 0;
   var tickets = [];
+  var cookTickets = [];
   var currentTicket;
 
   //chefCon.tickets = [];
@@ -55,6 +56,47 @@ function initPOS(){
     stage.addChild(child);
   })
 
+  //Initial setup of chef display
+  createHeader(chefCon, "Chef");
+  createBottom(chefCon);
+
+  var stationLine = new createjs.Shape();
+  stationLine.graphics.beginStroke("black");
+  stationLine.graphics.moveTo(1000, 0).lineTo(1000, 600).lineTo(1200, 600);
+
+  var stationText = new createjs.Text("Stations", "32px Arial", TEXT_COLOR);
+  stationText.x = 1040;
+  stationText.y = 8;
+
+  var initY = 70;
+  //Add button for each custom station
+  customCons.forEach(function(element){
+    buttonContain = new createjs.Container();
+    var statButton = new createjs.Shape();
+    statButton.graphics.beginFill(BUTTON_COLOR).drawRect(1025, initY, 150, 50);
+    statText = new createjs.Text(element.name, "32px Arial", TEXT_COLOR);
+    statText.x = 1030;
+    statText.y = initY + 10;
+    initY += 70;
+    buttonContain.addChild(statButton, statText);
+    buttonContain.on("click", function(){
+      topLevelCons.forEach(function(ele){
+        ele.alpha = 0;
+      })
+      element.alpha = 1;
+      stage.update();
+      //Need to make back button AND disable the chef fiddling with the menu items?
+    })
+    //buttonContain.on("click", goToContainer(stage, ele, topLevelCons));
+    chefCon.addChild(buttonContain);
+  });
+
+  chefCon.addChild(stationLine, stationText);
+
+
+
+
+
   //Server view is the inital display
   servCon.alpha = 1;
 
@@ -86,7 +128,6 @@ function initPOS(){
 
   var menuFooter = new createjs.Shape();
   menuFooter.graphics.beginFill(MENU_COLOR).drawRect(0, 600, 1200, 100);
-
 
   //Setup for the serv check
   var checkLine = new createjs.Shape();
@@ -220,6 +261,13 @@ function initPOS(){
   var repText = new createjs.Text("Repeat", "36px Arial", TEXT_COLOR);
   repText.x = 750;
   repText.y = 630;
+  repContain.on("click", function(){
+    currItem = currentTicket[1].pop();
+    currentTicket[1].push(currItem);
+    currentTicket[1].push(currItem);
+    redrawTicket(currentTicket, checkTicketContainer);
+    stage.update();
+  });
   repContain.addChild(repButton, repText);
 
   var sendContain = new createjs.Container();
@@ -228,6 +276,16 @@ function initPOS(){
   var sendText = new createjs.Text("SEND", "36px Arial", TEXT_COLOR);
   sendText.x = 1075;
   sendText.y = 630;
+  sendContain.on("click", function(){
+    //getting start time.
+    currentTicket.push(new Date().getTime() / 1000);
+    cookTickets.push(currentTicket);
+    drawChefTickets(cookTickets, chefCon);
+    customCons.forEach(function(con){
+      drawCookTickets(cookTickets, con);
+
+    });
+  });
   sendContain.addChild(sendButton, sendText);
 
   var voidContain = new createjs.Container();
@@ -247,7 +305,7 @@ function initPOS(){
   var clearButton = new createjs.Shape();
   clearButton.graphics.beginFill(BUTTON_COLOR).drawRect(1065, 340, 120, 80);
   var clearText = new createjs.Text("Clear", "36px Arial", TEXT_COLOR);
-  clearText.x = 1070;
+  clearText.x = 1080;
   clearText.y = 360;
   clearContain.on("click", function(){
     currentTicket[1] = [];
@@ -277,6 +335,11 @@ function initPOS(){
   var backText = new createjs.Text("Back", "36px Arial", TEXT_COLOR);
   backText.x = 1085;
   backText.y = 70;
+  backContain.on("click", function(){
+    servMainCon.alpha = 1;
+    servCheckCon.alpha = 0;
+    stage.update();
+  });
   backContain.addChild(backButton, backText);
 
   servCheckCon.addChild(checkLine, checkFooter, foodContain, drinkContain,
@@ -284,44 +347,6 @@ function initPOS(){
     repContain, payContain, cancelContain, clearContain, voidContain);
 
   servCon.addChild(servMainCon, servCheckCon);
-
-
-  //Initial setup of chef display
-  createHeader(chefCon, "Chef");
-  createBottom(chefCon);
-
-  var stationLine = new createjs.Shape();
-  stationLine.graphics.beginStroke("black");
-  stationLine.graphics.moveTo(1000, 0).lineTo(1000, 600).lineTo(1200, 600);
-
-  var stationText = new createjs.Text("Stations", "32px Arial", TEXT_COLOR);
-  stationText.x = 1040;
-  stationText.y = 8;
-
-  var initY = 70;
-  //Add button for each custom station
-  customCons.forEach(function(element){
-    buttonContain = new createjs.Container();
-    var statButton = new createjs.Shape();
-    statButton.graphics.beginFill(BUTTON_COLOR).drawRect(1025, initY, 150, 50);
-    statText = new createjs.Text(element.name, "32px Arial", TEXT_COLOR);
-    statText.x = 1030;
-    statText.y = initY + 10;
-    initY += 70;
-    buttonContain.addChild(statButton, statText);
-    buttonContain.on("click", function(){
-      topLevelCons.forEach(function(ele){
-        ele.alpha = 0;
-      })
-      element.alpha = 1;
-      stage.update();
-      //Need to make back button AND disable the chef fiddling with the menu items?
-    })
-    //buttonContain.on("click", goToContainer(stage, ele, topLevelCons));
-    chefCon.addChild(buttonContain);
-  });
-
-  chefCon.addChild(stationLine, stationText);
 
   stage.update();
 }
@@ -447,8 +472,87 @@ function drawTickets(con, ticket, stage){
   stage.update();
 }
 
-function drawCookTicket(){
+function drawChefTickets(cookTickets, chefContain){
+  ticketBaseContain = new createjs.Container();
+  chefContain.addChild(ticketBaseContain);
+  x1 = 50;
+  y1 = 60;
+  cookTickets.forEach(function(ticket){
+    var itemContain = new createjs.Container();
+    var itemShape = new createjs.Shape();
+    itemShape.graphics.beginFill(FOOD_COLOR).drawRect(x1, y1, 240, 200);
+    var numText = new createjs.Text("#" + ticket[0], "20px Arial", TEXT_COLOR);
+    numText.x = x1 + 210;
+    numText.y = y1 + 5;
+    itemContain.addChild(itemShape, numText);
+    y2 = y1 + 20;
+    x2 = x1 + 10;
+    ticket[1].forEach(function(item){
+      var itemText = new createjs.Text(item[0], "18px Arial", TEXT_COLOR);
+      itemText.x = x2 + 5;
+      itemText.y = y2 + 5;
+      y2 += 30;
+      itemContain.addChild(itemText);
+    });
+    ticketBaseContain.addChild(itemContain);
+    x1 += 320;
+    if (x1 > 1000){
+      x1 = 50;
+      y1 += 220;
+    }
+  });
+  stage.update();
+}
 
+function drawCookTickets(cookTickets, cookContain){
+  //Remove prev ticket contain if it exists
+  cookContain.removeChildAt(9);
+
+  ticketBaseContain = new createjs.Container();
+  cookContain.addChild(ticketBaseContain);
+  x1 = 50;
+  y1 = 60;
+  cookTickets.forEach(function(ticket){
+    var longest = getLongestItem(ticket);
+    ticket[1].forEach(function(item){
+      if (mealStations[item[0]].includes(cookContain.name)){
+        var itemContain = new createjs.Container();
+        var itemShape = new createjs.Shape();
+        itemShape.graphics.beginFill(FOOD_COLOR).drawRect(x1, y1, 240, 60);
+        var itemText = new createjs.Text(item[0], "18px Arial", TEXT_COLOR);
+        itemText.x = x1 + 5;
+        itemText.y = y1 + 5;
+        var numText = new createjs.Text("#" + ticket[0], "20px Arial", TEXT_COLOR);
+        numText.x = x1 + 210;
+        numText.y = y1 + 5;
+        itemContain.addChild(itemShape, itemText, numText);
+        y1 += 70;
+        if (y1 > 600){
+          y1 = 60;
+          x1 += 300;
+        }
+        if (!(ticket[3] + longest - menuDef[item[0]][2] >= new Date().getTime()/1000)){
+          createjs.Tween.get(itemContain)
+              .wait((ticket[3] + longest - menuDef[item[0]][2] - new Date().getTime()/1000)*1000 )
+              .to({alpha:1}, 0);
+        }
+        ticketBaseContain.addChild(itemContain);
+
+      }
+
+    });
+  });
+  stage.update();
+}
+
+function getLongestItem(ticket){
+  longest = 0;
+  ticket[1].forEach(function(element){
+    if (menuDef[element[0]][2] > longest){
+      longest = menuDef[element[0]][2];
+    }
+  });
+  return longest;
 }
 
 function Ticket(num, items){

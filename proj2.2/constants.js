@@ -20,3 +20,4 @@ const stations = ["Grill", "Salad", "You", "Can", "Add", "Whatever"];
 const prices = {"Balsamic Salad":7.95,
                 "Burger": 11.95,
                 "Fettuccine Alfredo": 10.59};
+const mealStations = {"Burger":["Grill"], "Balsamic Salad":["Salad"], "Fettuccine Alfredo":["Grill", "Salad"]};
