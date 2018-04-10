@@ -3,6 +3,7 @@ function initPOS(){
   MENU_COLOR = "#939393";
   TEXT_COLOR = "#000000";
   BUTTON_COLOR = "#b7e1ff";
+  FOOD_COLOR = "#ffffff";
 
   //Initial set up area
   var canvas = document.getElementById('canvas');
@@ -10,14 +11,22 @@ function initPOS(){
   canvas.height = 700;
 
   //The highest level containers
-  var stage = new createjs.Stage(canvas);
+  stage = new createjs.Stage(canvas);
   var servCon = new createjs.Container();
+  servCon.name = "Server";
   var chefCon = new createjs.Container();
+  chefCon.name = "Chef";
 
   //Structures to keep track of various things
-  var topLevelCons = [servCon, chefCon];
+  topLevelCons = [servCon, chefCon];
   var customCons = [];
-  chefCon.tickets = [];
+  var ticketCount = 0;
+  var tickets = [];
+  var currentTicket;
+
+  //chefCon.tickets = [];
+  currentHash = menuPerLetter;
+
 
   //This is the part that makes a new view for each custom element
   stations.forEach(function(ele){
@@ -29,6 +38,14 @@ function initPOS(){
   });
 
   topLevelCons = topLevelCons.concat(customCons);
+
+  var select = document.getElementById('pageSelect');
+  topLevelCons.forEach(function(con){
+    var opt = document.createElement("option");
+    opt.value= con.name;
+    opt.innerHTML = con.name;
+    select.appendChild(opt);
+  });
 
   var background = new createjs.Shape();
   background.graphics.beginFill(BASE_COLOR).drawRect(0, 0, 1200, 700);
@@ -43,7 +60,138 @@ function initPOS(){
 
   //Initial setup of server display
   createHeader(servCon, "Server");
+  var servMainCon = new createjs.Container();
+  var servCheckCon = new createjs.Container();
+  servCheckCon.alpha = 0;
+  createBottom(servMainCon);
 
+  //Setup for the serv main
+  newCheckContain = new createjs.Container();
+  var addButton = new createjs.Shape();
+  addButton.graphics.beginFill(BUTTON_COLOR).drawRect(1050, 610, 120, 80);
+  var newCheck = new createjs.Text("  New\nCheck", "32px Arial", TEXT_COLOR);
+  newCheck.x = 1060;
+  newCheck.y = 615;
+
+  newCheckContain.addChild(addButton, newCheck);
+  newCheckContain.on("click",function(){
+    servMainCon.alpha = 0;
+    servCheckCon.alpha = 1;
+    currentTicket = [ticketCount,[]];
+    tickets.push(currentTicket);
+    ticketCount++;
+    stage.update();
+  })
+  servMainCon.addChild(newCheckContain);
+
+  var menuFooter = new createjs.Shape();
+  menuFooter.graphics.beginFill(MENU_COLOR).drawRect(0, 600, 1200, 100);
+
+
+  //Setup for the serv check
+  var checkLine = new createjs.Shape();
+  checkLine.graphics.beginStroke("black");
+  checkLine.graphics.moveTo(600, 50).lineTo(600, 700);
+
+  var checkFooter = new createjs.Shape();
+  checkFooter.graphics.beginFill(MENU_COLOR).drawRect(0, 600, 1200, 100);
+  checkFooter.graphics.beginFill(MENU_COLOR).drawRect(1050, 0, 150, 700);
+
+  var checkContain = new createjs.Container();
+  var checkTicketContainer = new createjs.Container();
+  var checkButton = new createjs.Shape();
+  checkButton.graphics.beginFill(FOOD_COLOR).drawRect(650, 80, 350, 490);
+  var checkText = new createjs.Text("Check", "36px Arial", TEXT_COLOR);
+  checkText.x = 780;
+  checkText.y = 85;
+  checkContain.addChild(checkButton, checkText, checkTicketContainer);
+
+
+  var menuBaseContain = new createjs.Container();
+  var menuContain = new createjs.Container();
+  var menuButton = new createjs.Shape();
+  menuButton.graphics.beginFill(FOOD_COLOR).drawRect(30, 80, 530, 490);
+  var menuText = new createjs.Text("Menu", "36px Arial", TEXT_COLOR);
+  menuText.x = 245;
+  menuText.y = 85;
+  menuContain.addChild(menuText);
+
+  var menuSearchContain = new createjs.Container();
+  var searchChildContain = new createjs.Container();
+  var searchText = new createjs.Text("", "36px Arial", TEXT_COLOR);
+  searchText.x = 265;
+  searchText.y = 85;
+  menuSearchContain.addChild(searchText, searchChildContain);
+  menuSearchContain.alpha = 0;
+
+  menuBaseContain.addChild(menuButton, menuContain, menuSearchContain);
+
+  //Creates the alphabet for the menu
+  x1 = 60;
+  y1 = 140;
+  for (i = 0; i < 23; i++){
+    if (x1 > 500){
+      y1 += 85;
+      x1 = 60;
+    }
+    letterCon = new createjs.Container();
+    var letterButton = new createjs.Shape();
+    letterButton.graphics.beginFill(BUTTON_COLOR).drawRect(x1, y1, 75, 75);
+    var letter = new createjs.Text(String.fromCharCode(65 + i), "36px Arial", TEXT_COLOR);
+    letter.x = x1 + 20;
+    letter.y = y1 + 15;
+    letterCon.addChild(letterButton, letter);
+    letterCon.on("click", callbackClose(i, function(num){
+      if (currentHash[String.fromCharCode(97 + num)]){
+        menuContain.alpha = 0;
+        menuSearchContain.alpha = 1;
+        searchText.text = String.fromCharCode(65 + num);
+        buildSearch(currentHash[String.fromCharCode(97 + num)], searchChildContain, currentTicket, checkTicketContainer);
+        stage.update();
+      }
+    }));
+    menuContain.addChild(letterCon);
+
+    x1 += 100
+  }
+  //The xyz button
+  letterCon = new createjs.Container();
+  var letterButton = new createjs.Shape();
+  letterButton.graphics.beginFill(BUTTON_COLOR).drawRect(x1, y1, 175, 75);
+  var letter = new createjs.Text("X Y Z", "36px Arial", TEXT_COLOR);
+  letter.x = x1 + 40;
+  letter.y = y1 + 15;
+  letterCon.addChild(letterButton, letter);
+  menuContain.addChild(letterCon);
+
+  var foodContain = new createjs.Container();
+  var foodButton = new createjs.Shape();
+  foodButton.graphics.beginFill(BUTTON_COLOR).drawRect(30, 610, 100, 80);
+  var foodText = new createjs.Text("Food", "36px Arial", TEXT_COLOR);
+  foodText.x = 40;
+  foodText.y = 630;
+  foodContain.addChild(foodButton, foodText);
+
+  var drinkContain = new createjs.Container();
+  var drinkButton = new createjs.Shape();
+  drinkButton.graphics.beginFill(BUTTON_COLOR).drawRect(150, 610, 100, 80);
+  var drinkText = new createjs.Text("Drink", "36px Arial", TEXT_COLOR);
+  drinkText.x = 160;
+  drinkText.y = 630;
+  drinkContain.addChild(drinkButton, drinkText);
+
+  var backContain = new createjs.Container();
+  var backButton = new createjs.Shape();
+  backButton.graphics.beginFill(BUTTON_COLOR).drawRect(1065, 50, 120, 80);
+  var backText = new createjs.Text("Back", "36px Arial", TEXT_COLOR);
+  backText.x = 1085;
+  backText.y = 70;
+  backContain.addChild(backButton, backText);
+
+  servCheckCon.addChild(checkLine, checkFooter, foodContain, drinkContain,
+    menuBaseContain, checkContain, backContain);
+
+  servCon.addChild(servMainCon, servCheckCon);
 
 
   //Initial setup of chef display
@@ -90,7 +238,7 @@ function initPOS(){
 function createHeader(contain, name){
   var titleHeader = new createjs.Shape();
   titleHeader.graphics.beginFill(MENU_COLOR).drawRect(0, 0, 1200, 50);
-  var name = new createjs.Text(name, "32px Arial", TEXT_COLOR);
+  var name = new createjs.Text(name, "36px Arial", TEXT_COLOR);
   name.x = 30;
   name.y = 8;
   contain.addChild(titleHeader, name);
@@ -129,13 +277,77 @@ function createBottom(contain){
 
 }
 
+function buildSearch(letter, container, ticket, ticketContain){
+  initX = 60;
+  initY = 130;
+
+  letter.forEach(function(element){
+    var buttonContain = new createjs.Container();
+    var item = new createjs.Shape();
+    item.graphics.beginFill(BUTTON_COLOR).drawRect(initX, initY, 460, 40);
+    var itemName = new createjs.Text(element, "32px Arial", TEXT_COLOR);
+    itemName.x = initX + 10;
+    itemName.y = initY;
+    buttonContain.addChild(item, itemName);
+    buttonContain.name = element;
+    buttonContain.on("click", function(){
+      ticket[1].push([buttonContain.name, [], []]);
+      redrawTicket(ticket, ticketContain);
+    });
+    initY += 50;
+    container.addChild(buttonContain);
+  });
+}
+
+function redrawTicket(currentTicket, ticketContainer){
+  var x1 = 670;
+  var y1 = 140;
+  ticketContainer.removeAllChildren();
+  total = 0;
+  currentTicket[1].forEach(function(entree){
+      var entreeName = new createjs.Text(entree[0], "20px Arial", TEXT_COLOR);
+      entreeName.x = x1;
+      entreeName.y = y1;
+      var priceName = new createjs.Text(prices[entree[0]], "20px Arial", TEXT_COLOR);
+      priceName.x = x1 + 230;
+      priceName.y = y1;
+      ticketContainer.addChild(entreeName, priceName);
+      total += prices[entree[0]];
+
+      entree[1].forEach(function(add){
+        var addName = new createjs.Text("+ " + add, "16px Arial", TEXT_COLOR);
+        addName.x = x1 + 20;
+        addName.y = y1;
+        ticketContainer.addChild(addName);
+        y1 += 30;
+
+      });
+
+      entree[2].forEach(function(remove){
+        var removeName = new createjs.Text("- " + remove, "16px Arial", TEXT_COLOR);
+        removeName.x = x1 + 20;
+        removeName.y = y1;
+        ticketContainer.addChild(removeName);
+        y1 += 30;
+
+      });
+
+      y1 += 30;
+  });
+  var totalName = new createjs.Text("Total: " + total.toFixed(2), "20px Arial", TEXT_COLOR);
+  totalName.x = x1 + 200;
+  totalName.y = y1;
+  ticketContainer.addChild(totalName);
+  stage.update();
+}
+
 function drawTickets(con, ticket, stage){
   //Make a container for the entire ticket.
   ticketCon = new createjs.Container();
 
 
   con.addChild();
-  stage.refresh();
+  stage.update();
 }
 
 function drawCookTicket(){
@@ -145,4 +357,23 @@ function drawCookTicket(){
 function Ticket(num, items){
   this.num = num;
   this.item = items;
+}
+
+function callbackClose(i, callback){
+   return function(){
+      return callback(i);
+    }
+}
+
+function changePage(){
+  var select = document.getElementById("pageSelect");
+  var selectedValue = select.options[select.selectedIndex].value;
+  topLevelCons.forEach(function(con){
+    if (con.name == selectedValue){
+      con.alpha = 1;
+    } else{
+      con.alpha = 0;
+    }
+  });
+  stage.update();
 }
