@@ -11,9 +11,9 @@ const ingPerLetter = {"b":[ing.bacon, ing.bun],"c":[ing.cheese, ing.chicken],
     "p":[ing.pasta,ing.patty,ing.pepper, ing.pork], "t":[ing.tomato]};
 
 
-const menuDef = { "Balsamic Salad":(ing.lettuce),
-            "Burger": ([ing.bun, ing.cheese, ing.patty, ing.lettuce, ing.tomato], true, 15),
-              "Fettuccine Alfredo": ([ing.milk, ing.cheese, ing.chicken, ing.pasta], false, 8)}
+const menuDef = { "Balsamic Salad":[[ing.lettuce],false, 5],
+            "Burger": [[ing.bun, ing.cheese, ing.patty, ing.lettuce, ing.tomato], true, 15],
+              "Fettuccine Alfredo": [[ing.milk, ing.cheese, ing.chicken, ing.pasta], false, 8]}
 
 const stations = ["Grill", "Salad", "You", "Can", "Add", "Whatever"];
 
