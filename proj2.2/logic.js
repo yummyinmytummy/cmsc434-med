@@ -150,8 +150,8 @@ function initPOS(){
   var checkTicketContainer = new createjs.Container();
   var checkButton = new createjs.Shape();
   checkButton.graphics.beginFill(FOOD_COLOR).drawRect(650, 80, 350, 490);
-  var checkText = new createjs.Text("Check", "36px Arial", TEXT_COLOR);
-  checkText.x = 780;
+  var checkText = new createjs.Text("Check #" + (ticketCount + 1), "36px Arial", TEXT_COLOR);
+  checkText.x = 760;
   checkText.y = 85;
   checkContain.addChild(checkButton, checkText, checkTicketContainer);
 
@@ -266,6 +266,42 @@ function initPOS(){
   var modsText = new createjs.Text("Mods", "36px Arial", TEXT_COLOR);
   modsText.x = 625;
   modsText.y = 630;
+  modsContain.on("click", function(){
+    var sendConfirm = new createjs.Shape();
+    sendConfirm.graphics.beginFill(MENU_COLOR).drawRect(300, 200, 570, 170);
+    var sendLabel = new createjs.Text("Modifications", "36px Arial", TEXT_COLOR);
+    sendLabel.x = 480;
+    sendLabel.y = 210;
+
+    var yesButton = new createjs.Shape();
+    yesButton.graphics.beginFill(BUTTON_COLOR).drawRect(315, 270, 130, 70);
+    var yesText = new createjs.Text("Add", "36px Arial", TEXT_COLOR);
+    yesText.x = 345;
+    yesText.y = 285;
+
+    var noButton = new createjs.Shape();
+    noButton.graphics.beginFill(BUTTON_COLOR).drawRect(455, 270, 130, 70);
+    var noText = new createjs.Text("No", "36px Arial", TEXT_COLOR);
+    noText.x = 495;
+    noText.y = 285;
+
+    var subButton = new createjs.Shape();
+    subButton.graphics.beginFill(BUTTON_COLOR).drawRect(595, 270, 120, 70);
+    var subText = new createjs.Text("Sub", "36px Arial", TEXT_COLOR);
+    subText.x = 625;
+    subText.y = 285;
+
+    var sideButton = new createjs.Shape();
+    sideButton.graphics.beginFill(BUTTON_COLOR).drawRect(725, 270, 130, 70);
+    var sideText = new createjs.Text("On Side", "36px Arial", TEXT_COLOR);
+    sideText.x = 725;
+    sideText.y = 285;
+
+    sendContain.addChild(sendConfirm, sendLabel, yesButton, yesText, noButton, noText,
+      subButton, subText, sideButton, sideText)
+    stage.update();
+  });
+
   modsContain.addChild(modsButton, modsText);
 
   var repContain = new createjs.Container();
@@ -291,6 +327,40 @@ function initPOS(){
   sendText.y = 630;
   sendContain.on("click", function(){
     //getting start time.
+
+    // var errorConfirm = new createjs.Shape();
+    // errorConfirm.graphics.beginFill(MENU_COLOR).drawRect(290, 200, 590, 170);
+    // var errorLabel = new createjs.Text("Error: Cannot send an empty check", "36px Arial", TEXT_COLOR);
+    // errorLabel.x = 300;
+    // errorLabel.y = 210;
+    //
+    // var okButton = new createjs.Shape();
+    // okButton.graphics.beginFill(BUTTON_COLOR).drawRect(510, 270, 150, 70);
+    // var okText = new createjs.Text("OK", "36px Arial", TEXT_COLOR);
+    // okText.x = 560;
+    // okText.y = 285;
+
+    var sendConfirm = new createjs.Shape();
+    sendConfirm.graphics.beginFill(MENU_COLOR).drawRect(300, 200, 570, 170);
+    var sendLabel = new createjs.Text("Send check #1 to kitchen?", "36px Arial", TEXT_COLOR);
+    sendLabel.x = 380;
+    sendLabel.y = 210;
+
+    var yesButton = new createjs.Shape();
+    yesButton.graphics.beginFill(BUTTON_COLOR).drawRect(400, 270, 150, 70);
+    var yesText = new createjs.Text("Yes", "36px Arial", TEXT_COLOR);
+    yesText.x = 440;
+    yesText.y = 285;
+
+    var noButton = new createjs.Shape();
+    noButton.graphics.beginFill(BUTTON_COLOR).drawRect(610, 270, 150, 70);
+    var noText = new createjs.Text("No", "36px Arial", TEXT_COLOR);
+    noText.x = 660;
+    noText.y = 285;
+
+    sendContain.addChild(sendConfirm, sendLabel, yesButton, yesText, noButton, noText)
+    stage.update();
+
     currentTicket.push(new Date().getTime() / 1000);
     cookTickets.push(currentTicket);
     drawChefTickets(cookTickets, chefCon);
@@ -332,6 +402,28 @@ function initPOS(){
   var cancelText = new createjs.Text("Cancel", "36px Arial", TEXT_COLOR);
   cancelText.x = 1070;
   cancelText.y = 450;
+  cancelContain.on("click", function(){
+    var sendConfirm = new createjs.Shape();
+    sendConfirm.graphics.beginFill(MENU_COLOR).drawRect(300, 200, 570, 170);
+    var sendLabel = new createjs.Text("Cancel Check #1?", "36px Arial", TEXT_COLOR);
+    sendLabel.x = 430;
+    sendLabel.y = 210;
+
+    var yesButton = new createjs.Shape();
+    yesButton.graphics.beginFill(BUTTON_COLOR).drawRect(400, 270, 150, 70);
+    var yesText = new createjs.Text("Yes", "36px Arial", TEXT_COLOR);
+    yesText.x = 440;
+    yesText.y = 285;
+
+    var noButton = new createjs.Shape();
+    noButton.graphics.beginFill(BUTTON_COLOR).drawRect(610, 270, 150, 70);
+    var noText = new createjs.Text("No", "36px Arial", TEXT_COLOR);
+    noText.x = 660;
+    noText.y = 285;
+
+    sendContain.addChild(sendConfirm, sendLabel, yesButton, yesText, noButton, noText)
+    stage.update();
+  })
   cancelContain.addChild(cancelButton, cancelText);
 
   var payContain = new createjs.Container();
@@ -427,6 +519,42 @@ function buildSearch(character,letter, container, ticket, ticketContain){
     buttonContain.on("click", function(){
       ticket[1].push([buttonContain.name, [], []]);
       redrawTicket(ticket, ticketContain);
+      if (menuDef[buttonContain.name][1] == true){
+        var doneness = new createjs.Shape();
+        doneness.graphics.beginFill(MENU_COLOR).drawRect(300, 200, 570, 170);
+        var doneName = new createjs.Text(buttonContain.name + ": How Well Done?", "36px Arial", TEXT_COLOR);
+        doneName.x = 400;
+        doneName.y = 210;
+        var rare = new createjs.Shape();
+        rare.graphics.beginFill("#f74242").drawRect(315, 270, 100, 80);
+        var rareText = new createjs.Text("Rare", "36px Arial", TEXT_COLOR);
+        rareText.x = 325;
+        rareText.y = 290;
+        var medrare = new createjs.Shape();
+        medrare.graphics.beginFill("#f77a41").drawRect(425, 270, 100, 80);
+        var medRareText = new createjs.Text("Med.\nRare", "36px Arial", TEXT_COLOR);
+        medRareText.x = 435;
+        medRareText.y = 273;
+        var med = new createjs.Shape();
+        med.graphics.beginFill("#f79241").drawRect(535, 270, 100, 80);
+        var medText = new createjs.Text("Med.", "36px Arial", TEXT_COLOR);
+        medText.x = 545;
+        medText.y = 290;
+        var medwell = new createjs.Shape();
+        medwell.graphics.beginFill("#d87927").drawRect(645, 270, 100, 80);
+        var medWellText = new createjs.Text("Med.\nWell", "36px Arial", TEXT_COLOR);
+        medWellText.x = 650;
+        medWellText.y = 273;
+        var well = new createjs.Shape();
+        well.graphics.beginFill("#a85208").drawRect(755, 270, 100, 80);
+        var wellText = new createjs.Text("Well", "36px Arial", TEXT_COLOR);
+        wellText.x = 770;
+        wellText.y = 290;
+
+        ticketContain.addChild(doneness, doneName, rare, rareText,
+          medrare, medRareText, med, medText, medwell,medWellText, well, wellText)
+        stage.update()
+      }
     });
     initY += 50;
     container.addChild(buttonContain);
