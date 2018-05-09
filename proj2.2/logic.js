@@ -127,7 +127,8 @@ function initPOS(){
   newCheckContain.on("click",function(){
     servMainCon.alpha = 0;
     servCheckCon.alpha = 1;
-    currentTicket = [ticketCount,[]];
+    currentTicket = [ticketCount,[["Balsamic Salad", ["Bacon"], ["Salad Dressing"]],
+      ["Burger", [], []]]];
     tickets.push(currentTicket);
     ticketCount++;
     stage.update();
@@ -160,7 +161,7 @@ function initPOS(){
   var menuButton = new createjs.Shape();
   menuButton.graphics.beginFill(FOOD_COLOR).drawRect(30, 80, 530, 490);
   var menuText = new createjs.Text("Menu", "36px Arial", TEXT_COLOR);
-  menuText.x = 245;
+  menuText.x = 265;
   menuText.y = 85;
   menuContain.addChild(menuText);
 
@@ -501,7 +502,7 @@ function createBottom(contain){
 
 function buildSearch(character,letter, container, ticket, ticketContain){
   container.removeAllChildren();
-  var searchText = new createjs.Text(character, "36px Arial", TEXT_COLOR);
+  var searchText = new createjs.Text(character, "36px Arial", TEXT_COLOR);//character, "36px Arial", TEXT_COLOR);
   searchText.x = 265;
   searchText.y = 85;
 
@@ -576,6 +577,16 @@ function redrawTicket(currentTicket, ticketContainer){
       priceName.y = y1;
       ticketContainer.addChild(entreeName, priceName);
       total += prices[entree[0]];
+      y1 += 30;
+
+      if(menuDef[entree[0]][1]){
+        var addName = new createjs.Text("Doneness: Medium", "16px Arial", TEXT_COLOR);
+        addName.x = x1 + 20;
+        addName.y = y1;
+        ticketContainer.addChild(addName);
+        y1 += 30;
+      }
+
 
       entree[1].forEach(function(add){
         var addName = new createjs.Text("+ " + add, "16px Arial", TEXT_COLOR);
@@ -595,7 +606,12 @@ function redrawTicket(currentTicket, ticketContainer){
 
       });
 
+      var removeName = new createjs.Text("Side: Onion", "16px Arial", TEXT_COLOR);
+      removeName.x = x1 + 20;
+      removeName.y = y1;
+      ticketContainer.addChild(removeName);
       y1 += 30;
+
   });
   var totalName = new createjs.Text("Total: " + total.toFixed(2), "20px Arial", TEXT_COLOR);
   totalName.x = x1 + 200;
