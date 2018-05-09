@@ -29,7 +29,7 @@ function initPOS(){
   currentHash = menuPerLetter;
 
 
-  //This is the part that makes a new view for each custom element
+  //This is the part that makes a new v iew for each custom element
   stations.forEach(function(ele){
     stat = new createjs.Container();
     stat.name = ele;
@@ -62,7 +62,7 @@ function initPOS(){
 
   var stationLine = new createjs.Shape();
   stationLine.graphics.beginStroke("black");
-  stationLine.graphics.moveTo(1000, 0).lineTo(1000, 600).lineTo(1200, 600);
+  stationLine.graphics.moveTo(1000, 0).lineTo(1000, 700);
 
   var stationText = new createjs.Text("Stations", "32px Arial", TEXT_COLOR);
   stationText.x = 1040;
@@ -91,7 +91,15 @@ function initPOS(){
     chefCon.addChild(buttonContain);
   });
 
-  chefCon.addChild(stationLine, stationText);
+  var invContain = new createjs.Container();
+  var invButton = new createjs.Shape();
+  invButton.graphics.beginFill(BUTTON_COLOR).drawRect(1020, 610, 160, 80);
+  var invText = new createjs.Text("Inventory", "36px Arial", TEXT_COLOR);
+  invText.x = 1025;
+  invText.y = 630;
+  invContain.addChild(invButton, invText);
+
+  chefCon.addChild(stationLine, stationText, invContain);
 
 
 
@@ -171,7 +179,12 @@ function initPOS(){
     }
     letterCon = new createjs.Container();
     var letterButton = new createjs.Shape();
-    letterButton.graphics.beginFill(BUTTON_COLOR).drawRect(x1, y1, 75, 75);
+    if (String.fromCharCode(97 + i) in menuPerLetter){
+      letterButton.graphics.beginFill(BUTTON_COLOR).drawRect(x1, y1, 75, 75);
+    } else{
+      letterButton.graphics.beginFill(BASE_COLOR).drawRect(x1, y1, 75, 75);
+    }
+
     var letter = new createjs.Text(String.fromCharCode(65 + i), "36px Arial", TEXT_COLOR);
     letter.x = x1 + 20;
     letter.y = y1 + 15;
@@ -224,7 +237,7 @@ function initPOS(){
   //The xyz button
   letterCon = new createjs.Container();
   var letterButton = new createjs.Shape();
-  letterButton.graphics.beginFill(BUTTON_COLOR).drawRect(x1, y1, 175, 75);
+  letterButton.graphics.beginFill(BASE_COLOR).drawRect(x1, y1, 175, 75);
   var letter = new createjs.Text("X Y Z", "36px Arial", TEXT_COLOR);
   letter.x = x1 + 40;
   letter.y = y1 + 15;
@@ -290,7 +303,7 @@ function initPOS(){
 
   var voidContain = new createjs.Container();
   var voidButton = new createjs.Shape();
-  voidButton.graphics.beginFill(BUTTON_COLOR).drawRect(1065, 250, 120, 80);
+  voidButton.graphics.beginFill("#fceb53").drawRect(1065, 250, 120, 80);
   var voidText = new createjs.Text("Void", "36px Arial", TEXT_COLOR);
   voidText.x = 1085;
   voidText.y = 270;
@@ -303,7 +316,7 @@ function initPOS(){
 
   var clearContain = new createjs.Container();
   var clearButton = new createjs.Shape();
-  clearButton.graphics.beginFill(BUTTON_COLOR).drawRect(1065, 340, 120, 80);
+  clearButton.graphics.beginFill("#fca453").drawRect(1065, 340, 120, 80);
   var clearText = new createjs.Text("Clear", "36px Arial", TEXT_COLOR);
   clearText.x = 1080;
   clearText.y = 360;
@@ -315,7 +328,7 @@ function initPOS(){
 
   var cancelContain = new createjs.Container();
   var cancelButton = new createjs.Shape();
-  cancelButton.graphics.beginFill(BUTTON_COLOR).drawRect(1065, 430, 120, 80);
+  cancelButton.graphics.beginFill("#fc5353").drawRect(1065, 430, 120, 80);
   var cancelText = new createjs.Text("Cancel", "36px Arial", TEXT_COLOR);
   cancelText.x = 1070;
   cancelText.y = 450;
@@ -323,7 +336,7 @@ function initPOS(){
 
   var payContain = new createjs.Container();
   var payButton = new createjs.Shape();
-  payButton.graphics.beginFill(BUTTON_COLOR).drawRect(1065, 520, 120, 80);
+  payButton.graphics.beginFill("#8efc53").drawRect(1065, 520, 120, 80);
   var payText = new createjs.Text("Pay", "36px Arial", TEXT_COLOR);
   payText.x = 1095;
   payText.y = 540;
@@ -331,7 +344,7 @@ function initPOS(){
 
   var backContain = new createjs.Container();
   var backButton = new createjs.Shape();
-  backButton.graphics.beginFill(BUTTON_COLOR).drawRect(1065, 50, 120, 80);
+  backButton.graphics.beginFill("#fc5353").drawRect(1065, 50, 120, 80);
   var backText = new createjs.Text("Back", "36px Arial", TEXT_COLOR);
   backText.x = 1085;
   backText.y = 70;
