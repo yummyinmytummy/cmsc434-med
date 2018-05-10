@@ -35,6 +35,13 @@ function initPOS(){
     stat.name = ele;
     createHeader(stat, stat.name);
     createBottom(stat);
+    var backButton = new createjs.Shape();
+    backButton.graphics.beginFill("#fc5353").drawRect(1065, 610, 120, 80);
+    var backText = new createjs.Text("Back", "36px Arial", TEXT_COLOR);
+    backText.x = 1085;
+    backText.y = 630;
+    stat.addChild(backButton, backText)
+
     customCons.push(stat);
   });
 
@@ -127,8 +134,7 @@ function initPOS(){
   newCheckContain.on("click",function(){
     servMainCon.alpha = 0;
     servCheckCon.alpha = 1;
-    currentTicket = [ticketCount,[["Balsamic Salad", ["Bacon"], ["Salad Dressing"]],
-      ["Burger", [], []]]];
+    currentTicket = [ticketCount,[]];
     tickets.push(currentTicket);
     ticketCount++;
     stage.update();
