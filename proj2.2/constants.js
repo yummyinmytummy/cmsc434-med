@@ -1,5 +1,5 @@
 const ing= {sauce: sauce:"Sauce",
-fries: fries:"Fries",
+fries:"Fries",
 sourcream:"Sour Cream",
 croutons: "Croutons",
 caeser: "Caeser",
