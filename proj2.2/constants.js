@@ -203,4 +203,4 @@ const meanStations ={"Chicken Sandwich": ["Grill","Sandwich"],
 "Fettucinne Alfredo": ["Sautee"],
 "Orange Salmon": ["Grill","Salad"],
 "Zucchini Salad": ["Salad"],
-"Yellow Snapper":["Grill"]}
+"Yellow Snapper":["Grill"]};
