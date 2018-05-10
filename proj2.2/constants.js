@@ -1,4 +1,4 @@
-const ing= {sauce: sauce:"Sauce",
+const ing= {sauce:"Sauce",
 fries:"Fries",
 sourcream:"Sour Cream",
 croutons: "Croutons",
